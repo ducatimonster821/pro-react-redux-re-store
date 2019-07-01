@@ -14,22 +14,24 @@ import './book-list.css';
 class BookList extends Component {
     componentDidMount() {
         // console.log(this.props);
-        const {
-            bookstoreService,
-            booksLoaded,
-            booksRequested,
-            booksError } = this.props;
-
-        booksRequested();
-
-        bookstoreService.getBooks()
-            .then((data) => {
-                console.log('data', data);
-                booksLoaded(data)
-            }).catch((err) => booksError(err));
+        // const {
+        //     bookstoreService,
+        //     booksLoaded,
+        //     booksRequested,
+        //     booksError } = this.props;
+        //
+        // booksRequested();
+        //
+        // bookstoreService.getBooks()
+        //     .then((data) => {
+        //         console.log('data', data);
+        //         booksLoaded(data)
+        //     }).catch((err) => booksError(err));
 
         // bookstoreService.getBooks()
         //   .then((data) => booksLoaded(data));
+
+        this.props.fetchBooks();
     }
 
     render() {
@@ -94,10 +96,25 @@ const mapStateToProps = ({ books, loading, error }) => {
 //     }, dispatch);
 // };
 
-const mapDispatchToProps = {
-    booksLoaded,
-    booksRequested,
-    booksError
+// const mapDispatchToProps = {
+//     booksLoaded,
+//     booksRequested,
+//     booksError
+// };
+
+const mapDispatchToProps = (dispatch, ownProps) => {
+    const { bookstoreService } = ownProps;
+    return {
+        fetchBooks: () => {
+            console.log('Fetching Books');
+
+            dispatch(booksRequested());
+
+            bookstoreService.getBooks()
+                .then((data) => dispatch(booksLoaded(data)))
+                .catch((err) => dispatch(booksError(err)));
+        }
+    }
 };
 
 export default compose(
